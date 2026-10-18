@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TP Inventory</title>
+<meta name="theme-color" content="#4f46e5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script id="tplShim">(function(){
+  var API='https://script.google.com/macros/s/AKfycbxV4ZDfY7IRaEIHHUhqJC-Trh5mBJyG4uf_owl09daOt7zgGKzNAzYRWX3TWqxFzIydlw/exec', C=window.__TPL||{};
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
+  function clearAll(){try{Object.keys(localStorage).forEach(function(k){if(k==='tpl_auth'||k.indexOf('tpl_page_')===0)localStorage.removeItem(k);});}catch(e){}}
+  function call(fn,args,auth){
+    return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({fn:fn,args:args||[],auth:auth===undefined?(ls('tpl_auth')||''):auth})})
+      .then(function(r){if(!r.ok)throw new Error('সার্ভার সাড়া দিচ্ছে না ('+r.status+') — একটু পরে আবার চেষ্টা করুন।');
+        return r.json().catch(function(){throw new Error('সার্ভারের উত্তর বোঝা যায়নি।');});},
+        function(){throw new Error('সার্ভারে পৌঁছানো যায়নি — ইন্টারনেট সংযোগ দেখুন।');})
+      .then(function(j){
+        if(j&&j.ok)return j.data;
+        var m=(j&&j.error)||'অজানা সমস্যা।';
+        if(m==='AUTH_REQUIRED'&&auth===undefined){clearAll();location.reload();return new Promise(function(){});}
+        throw new Error(m);
+      });
+  }
+  function builder(){
+    var ok=null,fail=null,b=new Proxy({},{get:function(_,k){
+      if(k==='withSuccessHandler')return function(f){ok=f;return b;};
+      if(k==='withFailureHandler')return function(f){fail=f;return b;};
+      if(k==='withUserObject')return function(){return b;};
+      return function(){call(k,[].slice.call(arguments)).then(function(d){if(ok)ok(d);},function(e){if(fail)fail(e);else console.error(e);});};
+    }});
+    return b;
+  }
+  window.google={script:{run:new Proxy({},{get:function(_,k){return builder()[k];}})}};
+  window.__tplCall=call;
+  window.__tplClear=clearAll;
+  window.__tplSave=function(page,d){
+    var key='tpl_page_'+(page||'main'),v=JSON.stringify({email:d.email,ver:d.ver,title:d.title,html:d.html,t:Date.now()});
+    if(ls(key,v)!==null)return;
+    try{localStorage.setItem(key,v);}catch(e){try{Object.keys(localStorage).forEach(function(k){if(k.indexOf('tpl_page_')===0&&k!==key)localStorage.removeItem(k);});localStorage.setItem(key,v);}catch(e2){}}
+  };
+  if(!C.rendered)return;
+
+  // জমা থাকা পাতা দেখানো হয়েছে — পেছনে নতুনটা এনে রাখি; সংস্করণ বদলে থাকলে (আর কেউ কিছু না ছুঁয়ে থাকলে) রিলোড
+  if(C.fromCache){
+    var touched=false;['pointerdown','keydown'].forEach(function(ev){document.addEventListener(ev,function(){touched=true;},true);});
+    call('siteBoot',[C.page]).then(function(d){
+      if(!d||d.email!==ls('tpl_email'))return;
+      window.__tplSave(C.page,d);
+      if(d.ver!==C.ver&&!touched)location.reload();
+    },function(){});
+  }
+
+  // লগআউট — কম্পিউটারে সাইডবারের নিচে বোতাম, ফোনে উপরের ইউজার-ছবিতে চাপ দিলে
+  function logout(){
+    var bk=document.createElement('div');
+    bk.setAttribute('style','position:fixed;inset:0;z-index:2147483000;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;font-family:"Hind Siliguri",Inter,sans-serif');
+    bk.innerHTML='<div style="background:#fff;color:#0f172a;border-radius:18px;max-width:340px;width:100%;padding:22px 20px;box-shadow:0 20px 50px rgba(0,0,0,.3);text-align:center">'+
+      '<div style="font-size:30px">🚪</div><div style="font-weight:700;font-size:17px;margin:6px 0 4px">এই ডিভাইস থেকে বের হবেন?</div>'+
+      '<div style="color:#64748b;font-size:13.5px;margin-bottom:16px">আবার ঢুকতে ইমেইলে নতুন কোড লাগবে।</div>'+
+      '<div style="display:flex;gap:10px"><button data-a="no" style="flex:1;padding:11px;border-radius:11px;border:1px solid #d6dbe6;background:#fff;font:inherit;font-weight:600;cursor:pointer">থাকুক</button>'+
+      '<button data-a="yes" style="flex:1;padding:11px;border-radius:11px;border:0;background:#e11d48;color:#fff;font:inherit;font-weight:700;cursor:pointer">বের হন</button></div></div>';
+    bk.addEventListener('click',function(e){
+      var a=e.target.getAttribute&&e.target.getAttribute('data-a');
+      if(e.target===bk||a==='no'){bk.remove();return;}
+      if(a==='yes'){e.target.textContent='⏳';call('siteLogout',[]).catch(function(){}).then(function(){clearAll();location.reload();});}
+    });
+    document.body.appendChild(bk);
+  }
+  window.tplLogout=logout;
+  document.addEventListener('DOMContentLoaded',function(){
+    var foot=document.querySelector('.side-foot');
+    if(foot){
+      var b=document.createElement('button');
+      b.type='button';b.textContent='⎋ বের হন';b.title='এই ডিভাইস থেকে লগআউট';
+      b.setAttribute('style','margin-top:10px;width:100%;padding:8px 10px;border-radius:10px;border:1px solid var(--border-strong,#d6dbe6);background:transparent;color:var(--text-2,#475569);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer');
+      b.onclick=logout;foot.appendChild(b);
+    }
+    var u=document.querySelector('.ab-user');
+    if(u){u.style.cursor='pointer';u.title=(u.title?u.title+' — ':'')+'চাপ দিলে লগআউট';u.addEventListener('click',logout);}
+  });
+})();</script>
+<script>
+  (function(){var t=null;try{t=localStorage.getItem('tpl_theme');}catch(e){}
+    if(!t)t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+    document.documentElement.setAttribute('data-theme',t);})();
+</script>
+<style>
+  :root, :root[data-theme="light"] {
+    --bg:#eef0fa; --card:#ffffff; --text:#0f172a; --text-2:#475569; --muted:#8a94a6; --border:#d6dbe6;
+    --input:#ffffff; --primary:#4f46e5; --grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 55%,#d946ef 100%);
+    --err:#be123c; --ok:#15803d; --glow1:rgba(99,102,241,.26); --glow2:rgba(236,72,153,.17);
+  }
+  :root[data-theme="dark"] {
+    --bg:#0b0d1a; --card:#151829; --text:#e8eaf6; --text-2:#aab1c8; --muted:#7c84a0; --border:#2b3150;
+    --input:#0f1222; --primary:#818cf8; --err:#fb7185; --ok:#4ade80; --glow1:rgba(99,102,241,.22); --glow2:rgba(217,70,239,.14);
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; min-height:100%; }
+  body { background:var(--bg); color:var(--text); font-family:'Hind Siliguri','Inter',system-ui,sans-serif;
+    background-image:radial-gradient(900px 500px at 10% -10%,var(--glow1),transparent 60%),radial-gradient(800px 500px at 110% 110%,var(--glow2),transparent 60%);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+  .card { width:100%; max-width:400px; background:var(--card); border:1px solid var(--border); border-radius:22px;
+    padding:30px 26px 22px; box-shadow:0 24px 60px rgba(15,23,42,.14); }
+  .brand { display:flex; flex-direction:column; align-items:center; text-align:center; gap:6px; margin-bottom:20px; }
+  .brand img { width:64px; height:64px; border-radius:16px; box-shadow:0 8px 22px rgba(79,70,229,.25); }
+  .org { font-family:Inter,sans-serif; font-size:11.5px; font-weight:800; letter-spacing:.14em; color:var(--muted); margin-top:6px; }
+  .app { font-family:Inter,sans-serif; font-size:23px; font-weight:800; background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .sub { color:var(--text-2); font-size:14px; }
+  label { display:block; font-size:13.5px; font-weight:600; color:var(--text-2); margin:0 0 6px; }
+  input { width:100%; padding:13px 14px; border:1.5px solid var(--border); border-radius:12px; background:var(--input); color:var(--text);
+    font:inherit; font-size:16px; outline:none; transition:border-color .15s, box-shadow .15s; }
+  input:focus { border-color:var(--primary); box-shadow:0 0 0 4px rgba(99,102,241,.15); }
+  #code { letter-spacing:.5em; text-align:center; font-family:Inter,sans-serif; font-weight:700; font-size:22px; }
+  .btn { width:100%; margin-top:14px; padding:13px; border:0; border-radius:12px; background:var(--grad); color:#fff;
+    font:inherit; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 10px 24px rgba(99,102,241,.3); }
+  .btn:disabled { opacity:.65; cursor:wait; }
+  .msg { min-height:20px; margin-top:12px; font-size:13.5px; text-align:center; color:var(--err); }
+  .msg.ok { color:var(--ok); }
+  .links { display:flex; justify-content:space-between; gap:10px; margin-top:6px; }
+  .link { background:none; border:0; padding:4px 0; color:var(--primary); font:inherit; font-size:13.5px; font-weight:600; cursor:pointer; }
+  .link:disabled { color:var(--muted); cursor:default; }
+  .note { font-size:13px; color:var(--text-2); background:rgba(99,102,241,.08); border-radius:10px; padding:10px 12px; margin-bottom:14px; line-height:1.55; }
+  .foot { margin-top:18px; text-align:center; font-size:11.5px; color:var(--muted); }
+  .hide { display:none !important; }
+  .spin { width:38px; height:38px; border-radius:50%; border:3.5px solid rgba(99,102,241,.2); border-top-color:var(--primary); animation:sp 0.8s linear infinite; margin:8px auto 14px; }
+  @keyframes sp { to { transform:rotate(360deg); } }
+  #loading { text-align:center; color:var(--text-2); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand">
+    <img src="icon.png" alt="">
+    <div class="org">TECHNIQUE PUBLICATION</div>
+    <div class="app">TP Inventory</div>
+    <div class="sub">Sales Record System</div>
+  </div>
+
+  <div id="loading" class="hide"><div class="spin"></div><div id="loadMsg">লোড হচ্ছে…</div>
+    <div class="msg" id="loadErr"></div>
+    <button class="btn hide" id="retryBtn" type="button">আবার চেষ্টা করুন</button>
+  </div>
+
+  <form id="emailForm" class="hide" autocomplete="on">
+    <label for="email">আপনার ইমেইল</label>
+    <input id="email" type="email" inputmode="email" autocomplete="email" placeholder="example@gmail.com" required>
+    <button class="btn" id="sendBtn" type="submit">লগইন কোড পাঠান</button>
+    <div class="msg" id="emailMsg"></div>
+  </form>
+
+  <form id="codeForm" class="hide" autocomplete="off">
+    <div class="note" id="codeNote"></div>
+    <label for="code">৬ সংখ্যার কোড</label>
+    <input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="••••••">
+    <button class="btn" id="verifyBtn" type="submit">ঢুকুন</button>
+    <div class="msg" id="codeMsg"></div>
+    <div class="links">
+      <button class="link" id="otherBtn" type="button">← অন্য ইমেইল</button>
+      <button class="link" id="resendBtn" type="button">আবার কোড পাঠান</button>
+    </div>
+  </form>
+
+  <div class="foot">Developed By: Md. Ashraful Islam</div>
+</div>
+
+<script>
+(function(){
+  var PAGE='';
+  var m=/[?&]report=(boss|stock)\b/.exec(location.search);if(m){location.replace(m[1]+'/');return;}
+  var KEY='tpl_page_'+(PAGE||'main');
+  var call=window.__tplCall;
+  function $(id){return document.getElementById(id);}
+  function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){return null;}}
+  function show(id){['loading','emailForm','codeForm'].forEach(function(x){$(x).classList.toggle('hide',x!==id);});}
+  function msg(id,s,ok){$(id).textContent=s||'';$(id).className='msg'+(ok?' ok':'');}
+  function busy(b,on,label){b.disabled=on;if(on){b.dataset.l=b.textContent;b.textContent=label;}else if(b.dataset.l){b.textContent=b.dataset.l;}}
+
+  // সার্ভারের পাতা বসানো — shim সবার আগে, যাতে পাতার google.script.run fetch দিয়ে চলে
+  function render(d,fromCache){
+    var cfg={page:PAGE,ver:d.ver,fromCache:!!fromCache,rendered:true};
+    var inj='<script>window.__TPL='+JSON.stringify(cfg)+';<\/script><script>'+$('tplShim').textContent+'<\/script>'+
+      '<link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon.png"><link rel="apple-touch-icon" href="icon.png">'+
+      '<meta name="theme-color" content="#4f46e5">';
+    // github.io-র সব রিপোজিটরি একই ব্রাউজার storage ভাগ করে — তাই PIN লকের key-তে "tpl_"
+    var html=String(d.html).split("KEY = 'appLockLast'").join("KEY = 'tpl_appLockLast'");
+    html=/<head[^>]*>/i.test(html)?html.replace(/<head[^>]*>/i,function(h){return h+inj;}):inj+html;
+    document.open();document.write(html);document.close();
+  }
+
+  function boot(){
+    show('loading');msg('loadErr','');$('retryBtn').classList.add('hide');
+    call('siteBoot',[PAGE]).then(function(d){
+      window.__tplSave(PAGE,d);
+      render(d,false);
+    },function(e){
+      msg('loadErr',e.message);$('retryBtn').classList.remove('hide');$('loadMsg').textContent='লোড করা যায়নি';
+    });
+  }
+  $('retryBtn').onclick=function(){$('loadMsg').textContent='লোড হচ্ছে…';boot();};
+
+  // ---- লগইন ----
+  var email='',resendAt=0,timer=null;
+  function device(){
+    var u=navigator.userAgent,os=/Android/i.test(u)?'Android':/iPhone|iPad|iPod/i.test(u)?'iPhone/iPad':/Windows/i.test(u)?'Windows':/Mac OS/i.test(u)?'Mac':/Linux/i.test(u)?'Linux':'ডিভাইস';
+    var br=/Edg\//.test(u)?'Edge':/OPR\/|Opera/.test(u)?'Opera':/SamsungBrowser/.test(u)?'Samsung Internet':/Firefox\//.test(u)?'Firefox':/Chrome\//.test(u)?'Chrome':/Safari\//.test(u)?'Safari':'Browser';
+    return os+' · '+br;
+  }
+  function tick(){
+    var left=Math.ceil((resendAt-Date.now())/1000),b=$('resendBtn');
+    if(left>0){b.disabled=true;b.textContent='আবার কোড ('+left+'s)';}
+    else{b.disabled=false;b.textContent='আবার কোড পাঠান';clearInterval(timer);}
+  }
+  function send(btn,msgId){
+    busy(btn,true,'⏳ পাঠানো হচ্ছে…');msg(msgId,'');
+    return call('siteSendCode',[email],'').then(function(){
+      busy(btn,false);ls('tpl_email',email);
+      $('codeNote').innerHTML='<b></b> ইমেইলটি তালিকায় থাকলে এক মিনিটের মধ্যে একটা কোড যাবে। ইনবক্স (না পেলে Spam) দেখুন।';
+      $('codeNote').firstChild.textContent=email;
+      show('codeForm');$('code').value='';msg('codeMsg','');
+      resendAt=Date.now()+60000;clearInterval(timer);timer=setInterval(tick,1000);tick();
+      setTimeout(function(){$('code').focus();},50);
+    },function(e){busy(btn,false);msg(msgId,e.message);});
+  }
+  $('emailForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    email=$('email').value.trim().toLowerCase();
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){msg('emailMsg','সঠিক ইমেইল লিখুন।');return;}
+    send($('sendBtn'),'emailMsg');
+  });
+  $('resendBtn').onclick=function(){send($('resendBtn'),'codeMsg');};
+  $('otherBtn').onclick=function(){show('emailForm');$('email').focus();};
+  $('code').addEventListener('input',function(){
+    this.value=this.value.replace(/\D/g,'').slice(0,6);
+    if(this.value.length===6)$('codeForm').requestSubmit?$('codeForm').requestSubmit():$('verifyBtn').click();
+  });
+  $('codeForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var c=$('code').value.trim(),b=$('verifyBtn');
+    if(c.length!==6){msg('codeMsg','৬ সংখ্যার কোডটা লিখুন।');return;}
+    if(b.disabled)return;
+    busy(b,true,'⏳ যাচাই হচ্ছে…');msg('codeMsg','');
+    call('siteVerifyCode',[email,c,device()],'').then(function(r){
+      ls('tpl_auth',r.token);ls('tpl_email',r.email);
+      boot();
+    },function(e){busy(b,false);msg('codeMsg',e.message);$('code').select();});
+  });
+
+  // ---- শুরু ----
+  if(!ls('tpl_auth')){
+    show('emailForm');
+    var last=ls('tpl_email');if(last)$('email').value=last;
+    setTimeout(function(){$(last?'sendBtn':'email').focus();},50);
+    return;
+  }
+  var c=null;try{c=JSON.parse(ls(KEY)||'null');}catch(e){}
+  show('loading');
+  // পাতা পার্স হওয়া শেষে — চলতি parser থাকা অবস্থায় document.open কিছুই বদলায় না
+  var go=function(){if(c&&c.html&&c.email===ls('tpl_email'))render(c,true);else boot();};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',go);else go();
+})();
+</script>
+</body>
+</html>

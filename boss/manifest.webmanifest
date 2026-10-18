@@ -1,0 +1,19 @@
+{
+  "id": "/boss/",
+  "name": "TP Inventory · Boss Report — Technique Publication",
+  "short_name": "Boss Report",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef0fa",
+  "theme_color": "#4f46e5",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

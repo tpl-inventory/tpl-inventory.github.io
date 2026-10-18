@@ -1,0 +1,19 @@
+{
+  "id": "/stock/",
+  "name": "TP Inventory · Stock Check — Technique Publication",
+  "short_name": "Stock Check",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef0fa",
+  "theme_color": "#4f46e5",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
