@@ -68,7 +68,7 @@
     bk.addEventListener('click',function(e){
       var a=e.target.getAttribute&&e.target.getAttribute('data-a');
       if(e.target===bk||a==='no'){bk.remove();return;}
-      if(a==='yes'){e.target.textContent='⏳';call('siteLogout',[]).catch(function(){}).then(function(){clearAll();location.reload();});}
+      if(a==='yes'){e.target.textContent='⏳';if(window.NTF)NTF.logout();call('siteLogout',[]).catch(function(){}).then(function(){clearAll();location.reload();});}
     });
     document.body.appendChild(bk);
   }
@@ -185,6 +185,7 @@
   function render(d,fromCache){
     var cfg={page:PAGE,ver:d.ver,fromCache:!!fromCache,rendered:true};
     var inj='<script>window.__TPL='+JSON.stringify(cfg)+';<\/script><script>'+$('tplShim').textContent+'<\/script>'+
+      '<script src="/ntf.js"><\/script>'+
       '<link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" href="icon.png"><link rel="apple-touch-icon" href="icon.png">'+
       '<meta name="theme-color" content="#4f46e5">';
     // github.io-র সব রিপোজিটরি একই ব্রাউজার storage ভাগ করে — তাই PIN লকের key-তে "tpl_"
